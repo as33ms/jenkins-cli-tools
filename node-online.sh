@@ -28,7 +28,10 @@ for SLAVE in $SLAVES_TO_CHECK; do
         echo "'$SLAVE' is offline"
         ssh $SLAVE_USER@$SLAVE ls /home/$SLAVE_USER/jenkins
         if [ $? -eq 0 ]; then
-            ssh $SLAVE_USER@$SLAVE sh /home/$SLAVE_USER/jenkins/runjenkins.sh
+            ssh $SLAVE_USER@$SLAVE "cd /home/$SLAVE_USER/jenkins/ && sh runjenkins.sh &"
+            if [ $? -ne 0 ]; then
+                echo "Failed to bring slave online"
+            fi
         else
             echo "Unable to get ssh hook for $SLAVE"
         fi
