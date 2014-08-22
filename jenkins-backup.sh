@@ -1,13 +1,15 @@
 #!/bin/sh
 blacklist="userContent"
-backupdir=/home/master/jenkins/backups
+backupdir=/home/master/backups/jenkins
 
 # locations
-user=buildbot
-pass=dPvU3KQhT7Ck
 server=http://buildserver:8080
 groovy=/home/master/maintenance/status.groovy
 clijar=/home/master/maintenance/jenkins-cli.jar
+
+#credentials
+user=$(cat /home/master/maintenance/.buildbotcreds-wumpus.name | cut -d ',' -f1)
+pass=$(cat /home/master/maintenance/.buildbotcreds-wumpus.name | cut -d ',' -f2)
 
 cd /var/lib/jenkins
 
