@@ -33,13 +33,22 @@ echo $directories
 
 java -jar $clijar -s $server groovy $groovy --username $user --password $pass | grep WAIT_MORE -A 10
 waitmore=$?
+waitcount=0
 
+maxwait=90
+waitsecs=60
 
-while [ $waitmore -eq 0 ]; do
-    sleep 60
+while [ $waitmore -eq 0 -a $waitcount -lt $maxwait ]; do
+    sleep $waitsecs
     java -jar $clijar -s $server groovy $groovy --username $user --password $pass | grep WAIT_MORE -A 10
     waitmore=$?
+    waitcount=$(($waitcount+1))
 done
+
+if [ $waitcount -eq $maxwait ]; then
+    echo "Reached waiting limit of $(($waitcount*$waitsecs)) seconds, will abort now!"
+    exit 1
+fi
 
 if [ $waitmore -ne 0 ]; then
     echo "Stop jenkins (safe-shutdown)"
