@@ -8,3 +8,4 @@ export PATH=$PATH:/sbin:/usr/sbin:/usr/bin:/home/master/maintenance
 cd /home/master/maintenance
 sh jenkins-backup.sh
 sh testlink-backup.sh
+sh mwiki-backup.sh
