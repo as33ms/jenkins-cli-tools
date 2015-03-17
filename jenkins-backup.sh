@@ -35,7 +35,7 @@ java -jar $clijar -s $server groovy $groovy --username $user --password $pass | 
 waitmore=$?
 waitcount=0
 
-maxwait=90
+maxwait=600
 waitsecs=60
 
 while [ $waitmore -eq 0 -a $waitcount -lt $maxwait ]; do
