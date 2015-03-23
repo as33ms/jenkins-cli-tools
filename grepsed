@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo grep -l -P '<numToKeep>(!?-1)' */config.xml | sudo xargs sed -i -e 's|<numToKeep>\d+|<numToKeep>-1|g'
