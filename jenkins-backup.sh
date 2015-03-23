@@ -63,7 +63,8 @@ if [ $waitmore -ne 0 ]; then
     backup=$backupdir/$today/jenkins.tar.gz
 
     # create the backup
-    tar -czvf $backup $directories
+    tar -czvf --exclude=*/archive$ --exclude-vcs --exclude-caches-all $backup $directories
+    #tar -czvf --exclude=*/archive* --exclude-vcs --exclude-caches-all $backup $directories
 
     echo "Putting jenkins up again"
     /usr/sbin/service jenkins start
