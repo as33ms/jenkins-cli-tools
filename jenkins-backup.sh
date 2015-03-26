@@ -1,5 +1,5 @@
 #!/bin/sh
-blacklist="userContent"
+blacklist="userContent \${WORK_DIR}"
 backupdir=/home/master/backups/jenkins
 
 # locations
@@ -63,8 +63,11 @@ if [ $waitmore -ne 0 ]; then
     backup=$backupdir/$today/jenkins.tar.gz
 
     # create the backup
-    tar -czvf --exclude=*/archive$ --exclude-vcs --exclude-caches-all $backup $directories
-    #tar -czvf --exclude=*/archive* --exclude-vcs --exclude-caches-all $backup $directories
+    tar -czvf $backup $directories *.xml --exclude=*outOfOrderBuilds* --exclude=*/archive$ --exclude-vcs --exclude-caches-all | tee $backup.filelist.txt
+
+    if [ $? -ne 0 ];
+        echo "ERROR Occured while running backup. Please see: $backup.filelist.txt for errors."
+    fi
 
     echo "Putting jenkins up again"
     /usr/sbin/service jenkins start
