@@ -18,18 +18,26 @@ dirs=$(echo */)
 
 today=$(date +%Y-%m-%d)
 
-directories=
-
-for adir in $dirs
+echo "---- All existing dirs at JENKINS_HOME (/var/lib/jenkins) ----"
+for dir in $dirs
 do
-    for black in $blacklist
-    do
-        echo $adir | grep $black || directories="${adir} ${directories}"
-    done
+    echo " + $dir"
 done
 
-echo "Directories to backup:"
-echo $directories
+directories="$dirs"
+
+echo "---- Cleaning up blacklisted directories ----"
+for black in $blacklist
+do
+    echo " - Removing blacklisted directory: $black"
+    directories=$(echo $directories | sed -e "s:$black/::g")
+done
+
+echo "---- Directories to backup ----"
+for dir in $directories
+do
+    echo " ++ $dir"
+done
 
 java -jar $clijar -s $server groovy $groovy --username $user --password $pass | grep WAIT_MORE -A 10
 waitmore=$?
@@ -65,7 +73,7 @@ if [ $waitmore -ne 0 ]; then
     # create the backup
     tar -czvf $backup $directories *.xml --exclude=*outOfOrderBuilds* --exclude=*/archive$ --exclude-vcs --exclude-caches-all | tee $backup.filelist.txt
 
-    if [ $? -ne 0 ];
+    if [ $? -ne 0 ]; then
         echo "ERROR Occured while running backup. Please see: $backup.filelist.txt for errors."
     fi
 
