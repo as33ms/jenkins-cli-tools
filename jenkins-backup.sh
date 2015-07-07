@@ -8,8 +8,8 @@ groovy=/home/master/maintenance/status.groovy
 clijar=/home/master/maintenance/jenkins-cli.jar
 
 #credentials
-user=$(cat /home/master/maintenance/.buildbotcreds-wumpus.name | cut -d ',' -f1)
-pass=$(cat /home/master/maintenance/.buildbotcreds-wumpus.name | cut -d ',' -f2)
+user=$(cat /home/master/maintenance/.buildbotcreds-my.domain | cut -d ',' -f1)
+pass=$(cat /home/master/maintenance/.buildbotcreds-my.domain | cut -d ',' -f2)
 
 cd /var/lib/jenkins
 
