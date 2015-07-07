@@ -1,5 +1,5 @@
 #!/bin/sh
-blacklist="userContent \${WORK_DIR}"
+blacklist="userContent \${WORK_DIR} backups"
 backupdir=/home/master/backups/jenkins
 
 # locations
@@ -58,6 +58,19 @@ if [ $waitcount -eq $maxwait ]; then
     exit 1
 fi
 
+#below are the exclusions that are passed to the tar as --exclude so that they are not
+# the part of the backup that is being created
+exclusions="--exclude-vcs --exclude-caches-all"
+path_excludes="*outOfOrderBuilds* */archive$ *cobertura*"
+
+for exclude in $path_excludes
+do
+    echo " - Adding excludes for $exclude"
+    exclusions="${exclusions} --exclude=${exclude}"
+done
+
+echo "Following paths have been excluded: $exclusions"
+
 if [ $waitmore -ne 0 ]; then
     echo "Stop jenkins (safe-shutdown)"
     #java -jar $clijar -s $server safe-shutdown --username $user --password $pass 
@@ -71,7 +84,7 @@ if [ $waitmore -ne 0 ]; then
     backup=$backupdir/$today/jenkins.tar.gz
 
     # create the backup
-    tar -czvf $backup $directories *.xml --exclude=*outOfOrderBuilds* --exclude=*/archive$ --exclude-vcs --exclude-caches-all | tee $backup.filelist.txt
+    tar -czvf $backup $directories *.xml $exclusions --exclude-vcs --exclude-caches-all | tee $backup.filelist.txt
 
     if [ $? -ne 0 ]; then
         echo "ERROR Occured while running backup. Please see: $backup.filelist.txt for errors."
